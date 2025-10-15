@@ -11,8 +11,8 @@
  ***************************************************/
 
 #define BLYNK_TEMPLATE_ID "TMPL3YTxgqiD_"
-#define BLYNK_TEMPLATE_NAME "GAS GUARD"
-#define BLYNK_AUTH_TOKEN "-NON7ERXiM_hicSMRGYin1MOyRkxWN8Q"
+#define BLYNK_TEMPLATE_NAME "GAS GAURD"
+#define BLYNK_AUTH_TOKEN "YOUR_BLYNK_AUTH_TOKEN"
 
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>

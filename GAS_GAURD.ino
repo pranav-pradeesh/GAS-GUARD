@@ -7,6 +7,7 @@
  * - Buzzer + Red/Green LEDs
  * - Blynk IoT + Local Web Server + AP Fallback
  * - OTA updates
+ (EDITED)
  ***************************************************/
 
 #define BLYNK_TEMPLATE_ID "TMPL3YTxgqiD_"
@@ -44,6 +45,8 @@ Servo ventServo;
 BlynkTimer timer;
 ESP8266WebServer server(80);
 
+int lastServoAngle = -1; // store last servo position to avoid redundant writes
+
 // ---------- Function Prototypes ----------
 void checkGas();
 void reconnectWiFi();
@@ -63,6 +66,7 @@ void setup() {
 
   ventServo.attach(SERVO_PIN);
   ventServo.write(0); // start closed
+  lastServoAngle = 0;
 
   // Wi-Fi
   WiFi.mode(WIFI_STA);
@@ -150,7 +154,10 @@ void checkGas() {
     digitalWrite(RED_LED, HIGH);
     digitalWrite(GREEN_LED, LOW);
     digitalWrite(BUZZER_PIN, HIGH);
-    ventServo.write(90);
+    if (lastServoAngle != 90) {
+      ventServo.write(90);
+      lastServoAngle = 90;
+    }
     buzzerState = true;
     if (!gasAlertSent) {
       Blynk.logEvent("gas_alert", "⚠️ Gas Leak Detected! Please check immediately.");
@@ -160,7 +167,10 @@ void checkGas() {
     digitalWrite(RED_LED, LOW);
     digitalWrite(GREEN_LED, HIGH);
     if (!buzzerState) digitalWrite(BUZZER_PIN, LOW);
-    ventServo.write(0);
+    if (lastServoAngle != 0) {
+      ventServo.write(0);
+      lastServoAngle = 0;
+    }
     buzzerState = false;
     gasAlertSent = false;
   }
@@ -193,10 +203,10 @@ BLYNK_WRITE(V1) {
 
 BLYNK_WRITE(V2) {
   int angle = param.asInt();
-  if (angle < 0) angle = 0;
-  if (angle > 180) angle = 180;
+  angle = constrain(angle, 0, 180);
   ventServo.write(angle);
-  Serial.print("Servo angle: "); Serial.println(angle);
+  Serial.print("Servo angle: ");
+  Serial.println(angle);
 }
 
 // ---------- Web Server Handlers ----------
@@ -269,7 +279,10 @@ void handleVent() {
     int angle = server.arg("angle").toInt();
     if (angle < 0) angle = 0;
     if (angle > 180) angle = 180;
-    ventServo.write(angle);
+    if (angle != lastServoAngle) {
+      ventServo.write(angle);
+      lastServoAngle = angle;
+    }
     Serial.print("Vent angle set to: "); Serial.println(angle);
   }
   server.sendHeader("Location","/");
@@ -280,7 +293,7 @@ void handleVent() {
 void handleBuzzer() {
   if (server.hasArg("state")) {
     int state = server.arg("state").toInt();
-    digitalWrite(BUZZER_PIN, state ? HIGH : LOW);
+    digitalWrite(BUZZER_PIN, state ? H+IGH : LOW);
     buzzerState = (state != 0);
     Serial.print("Buzzer state: "); Serial.println(buzzerState);
   }

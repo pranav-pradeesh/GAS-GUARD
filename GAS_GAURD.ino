@@ -293,7 +293,7 @@ void handleVent() {
 void handleBuzzer() {
   if (server.hasArg("state")) {
     int state = server.arg("state").toInt();
-    digitalWrite(BUZZER_PIN, state ? H+IGH : LOW);
+    digitalWrite(BUZZER_PIN, state ? HIGH : LOW);
     buzzerState = (state != 0);
     Serial.print("Buzzer state: "); Serial.println(buzzerState);
   }

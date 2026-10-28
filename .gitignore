@@ -1,0 +1,3 @@
+gas_guard/secrets.h
+build/
+*.bin

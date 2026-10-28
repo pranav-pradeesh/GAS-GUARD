@@ -1,5 +1,5 @@
 /***************************************************
- * Smart Gas Safety System – Production Ready
+ * Gas Guard: ESP8266 gas-leak detector
  * Components:
  * - NodeMCU ESP8266
  * - MQ2 Gas Sensor
@@ -7,12 +7,11 @@
  * - Buzzer + Red/Green LEDs
  * - Blynk IoT + Local Web Server + AP Fallback
  * - OTA updates
- (EDITED)
  ***************************************************/
 
-#define BLYNK_TEMPLATE_ID "TMPL3YTxgqiD_"
-#define BLYNK_TEMPLATE_NAME "GAS GAURD"
-#define BLYNK_AUTH_TOKEN "YOUR_BLYNK_AUTH_TOKEN"
+// Credentials live in secrets.h (gitignored). Copy secrets.example.h to secrets.h and fill it in.
+// It must be included before the Blynk header, which reads BLYNK_TEMPLATE_ID at include time.
+#include "secrets.h"
 
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
@@ -21,12 +20,12 @@
 #include <ESP8266WebServer.h>
 
 // ---------- Wi-Fi Credentials ----------
-char ssid[] = "YOUR_WIFI_SSID";
-char pass[] = "YOUR_WIFI_PASSWORD";
+char ssid[] = WIFI_SSID;
+char pass[] = WIFI_PASS;
 
 // ---------- AP Fallback ----------
 const char* ap_ssid = "GasSafety_AP";
-const char* ap_pass = "12345678";
+const char* ap_pass = AP_PASS;
 
 // ---------- Pin Definitions ----------
 #define MQ2_PIN     A0
